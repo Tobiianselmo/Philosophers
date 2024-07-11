@@ -6,7 +6,7 @@
 /*   By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:53:42 by tanselmo          #+#    #+#             */
-/*   Updated: 2024/07/10 17:06:07 by tanselmo         ###   ########.fr       */
+/*   Updated: 2024/07/11 16:12:33 by tanselmo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ int	init_struct(t_philo *data, char **argv)
 	i = 1;
 	while (argv[i])
 	{
-		if (set_num(data, i, argv[i]) == -1)
+		if (set_num(data, i, argv[i]) == 0)
 		{
 			// free struct
 			return (0);
