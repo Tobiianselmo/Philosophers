@@ -6,7 +6,7 @@
 /*   By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 16:00:39 by tanselmo          #+#    #+#             */
-/*   Updated: 2024/07/10 16:43:00 by tanselmo         ###   ########.fr       */
+/*   Updated: 2024/07/19 16:45:49 by tanselmo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,15 +26,12 @@ static int	is_clean(char *str)
 	i = 0;
 	while (str[i])
 	{
-		if (is_digit(str[i]) == 0)
+		if (is_digit(str[i]) == 0 && str[i] != '+')
 			return (-1);
 		i++;
 	}
 	return (0);
 }
-
-// Quedaria saber que numeros se pueden recibir realmente,
-// ya que 0, supongo que tampoco se deberia poder, pero ni idea. :)
 
 int	atoi_phil(char *str)
 {
