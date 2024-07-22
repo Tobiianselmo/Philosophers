@@ -6,7 +6,7 @@
 #    By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/09 16:01:48 by tanselmo          #+#    #+#              #
-#    Updated: 2024/07/10 16:30:09 by tanselmo         ###   ########.fr        #
+#    Updated: 2024/07/22 16:39:24 by tanselmo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,10 +17,12 @@ OBJ_DIR = obj
 FILES = src/philo.c \
 src/init.c \
 src/atoi.c \
+src/threads.c \
+src/utils.c \
 
 CC = clang
 
-CFLAGS = -g -Wall -Werror -Wextra
+CFLAGS = -g -Wall -Werror -Wextra -pthread
 
 OBJS_SRCS = $(patsubst %.c, $(OBJ_DIR)/%.o, $(FILES))
 

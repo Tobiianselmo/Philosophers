@@ -6,21 +6,21 @@
 /*   By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:53:42 by tanselmo          #+#    #+#             */
-/*   Updated: 2024/07/19 16:57:53 by tanselmo         ###   ########.fr       */
+/*   Updated: 2024/07/22 16:39:40 by tanselmo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
 
 
-static void	init_num(t_vars *data)
+/* static void	init_num(t_vars *data)
 {
 	data->n_philo = -1;
 	data->t_die = -1;
 	data->t_eat = -1;
 	data->t_sleep = -1;
 	data->must_eat = -1;
-}
+} */
 
 static int	set_num(t_vars *data, int i, char *line)
 {
@@ -53,5 +53,7 @@ int	init_struct(t_vars *data, char **argv)
 			return (0);
 		i++;
 	}
+	data->death = 0;
+	data->start = 0;
 	return (1);
 }

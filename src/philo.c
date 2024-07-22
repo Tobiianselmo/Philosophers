@@ -6,7 +6,7 @@
 /*   By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 16:24:40 by tanselmo          #+#    #+#             */
-/*   Updated: 2024/07/19 18:37:57 by tanselmo         ###   ########.fr       */
+/*   Updated: 2024/07/22 16:59:16 by tanselmo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,8 @@ int	main(int argc, char **argv)
 	if (init_struct(&vars, argv) == 0)
 		return (0);
 	forks = init_forks(vars.n_philo);
+	if (!forks)
+		return (0);
 	create_threads(&philo, &vars, forks);
 	return (0);
 }
