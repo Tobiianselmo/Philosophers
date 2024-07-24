@@ -6,7 +6,7 @@
 /*   By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:41:52 by tanselmo          #+#    #+#             */
-/*   Updated: 2024/07/22 19:36:44 by tanselmo         ###   ########.fr       */
+/*   Updated: 2024/07/24 16:35:28 by tanselmo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <unistd.h>
 # include <pthread.h>
 # include <stdlib.h>
+# include <stdbool.h>
 # include <sys/time.h>
 
 # define SLEEP "is sleeping"
@@ -33,9 +34,15 @@ typedef struct	s_vars
 	int				t_eat;
 	int				t_sleep;
 	int				must_eat;
+	bool			bool_meals;
 	int				death;
 	long			start;
-	pthread_mutex_t	write;
+	pthread_mutex_t	num_meals_mtx;
+	pthread_mutex_t	last_meal_mtx;
+	pthread_mutex_t	bool_mtx;
+	pthread_mutex_t	death_mtx;
+	pthread_mutex_t	write_mtx;
+	
 }	t_vars;
 
 typedef struct	s_philo
@@ -46,8 +53,12 @@ typedef struct	s_philo
 	pthread_t		thread;
 	pthread_mutex_t	*l_fork;
 	pthread_mutex_t	*r_fork;
-	pthread_mutex_t	*write;
 	t_vars			*vars;
+	pthread_mutex_t	*num_meals_mtx;
+	pthread_mutex_t	*last_meal_mtx;
+	pthread_mutex_t	*bool_mtx;
+	pthread_mutex_t	*death_mtx;
+	pthread_mutex_t	*write_mtx;
 }	t_philo;
 
 //-------------INIT------------//
@@ -56,10 +67,11 @@ int		init_struct(t_vars *data, char **argv);
 int		atoi_phil(char *str);
 //------------UTILS------------//
 void	write_action(t_philo *philo, char *action);
-void	eat_time(t_philo *philo, int time);
-void	sleep_time(int time);
+void	sleepy_time(int time);
 int		get_time(void);
-
-void	create_threads(t_philo *philo, t_vars *vars, pthread_mutex_t *forks);
+int		get_death(t_vars *vars);
+void	set_death(t_vars *vars, int death);
+//------------THREADS----------//
+t_philo	*create_threads(t_vars *vars, pthread_mutex_t *forks);
 
 #endif

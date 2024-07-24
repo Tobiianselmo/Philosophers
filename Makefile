@@ -6,7 +6,7 @@
 #    By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/09 16:01:48 by tanselmo          #+#    #+#              #
-#    Updated: 2024/07/22 16:39:24 by tanselmo         ###   ########.fr        #
+#    Updated: 2024/07/24 18:14:33 by tanselmo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ src/utils.c \
 
 CC = clang
 
-CFLAGS = -g -Wall -Werror -Wextra -pthread
+CFLAGS = -g -Wall -Werror -Wextra -pthread #-fsanitize=thread
 
 OBJS_SRCS = $(patsubst %.c, $(OBJ_DIR)/%.o, $(FILES))
 
@@ -41,7 +41,7 @@ $(OBJ_DIR)/%.o: %.c
 #Rules
 
 $(NAME): $(OBJS_SRCS)
-	@$(CC) $(INCLUDE) $(OBJS_SRCS) -o $(NAME)
+	@$(CC) $(CFLAGS) $(INCLUDE) $(OBJS_SRCS) -o $(NAME)
 
 clean:
 	@$(RM) $(OBJ_DIR) clean

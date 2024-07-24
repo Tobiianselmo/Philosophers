@@ -6,21 +6,21 @@
 /*   By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:53:42 by tanselmo          #+#    #+#             */
-/*   Updated: 2024/07/22 16:39:40 by tanselmo         ###   ########.fr       */
+/*   Updated: 2024/07/24 12:48:54 by tanselmo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
 
 
-/* static void	init_num(t_vars *data)
+static void	init_num(t_vars *data)
 {
 	data->n_philo = -1;
 	data->t_die = -1;
 	data->t_eat = -1;
 	data->t_sleep = -1;
 	data->must_eat = -1;
-} */
+}
 
 static int	set_num(t_vars *data, int i, char *line)
 {
@@ -47,13 +47,23 @@ int	init_struct(t_vars *data, char **argv)
 	int	i;	
 
 	i = 1;
+	init_num(data);
 	while (argv[i])
 	{
 		if (set_num(data, i, argv[i]) == 0)
 			return (0);
 		i++;
 	}
+	if (data->must_eat != -1)
+		data->bool_meals = true;
+	else
+		data->bool_meals = false;
 	data->death = 0;
 	data->start = 0;
+	pthread_mutex_init(&data->write_mtx, NULL);
+	pthread_mutex_init(&data->death_mtx, NULL);
+	pthread_mutex_init(&data->bool_mtx, NULL);
+	pthread_mutex_init(&data->last_meal_mtx, NULL);
+	pthread_mutex_init(&data->num_meals_mtx, NULL);
 	return (1);
 }
