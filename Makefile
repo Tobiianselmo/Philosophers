@@ -6,7 +6,7 @@
 #    By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/09 16:01:48 by tanselmo          #+#    #+#              #
-#    Updated: 2024/07/24 18:14:33 by tanselmo         ###   ########.fr        #
+#    Updated: 2024/07/25 19:20:15 by tanselmo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,7 @@ src/init.c \
 src/atoi.c \
 src/threads.c \
 src/utils.c \
+src/check_utils.c \
 
 CC = clang
 

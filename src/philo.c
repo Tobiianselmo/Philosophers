@@ -6,13 +6,28 @@
 /*   By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 16:24:40 by tanselmo          #+#    #+#             */
-/*   Updated: 2024/07/24 18:00:43 by tanselmo         ###   ########.fr       */
+/*   Updated: 2024/07/25 19:24:28 by tanselmo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
 
-static void	*hawk_eye(void *arg) //MONITOR
+static int	dead_or_alive(t_philo *philo, int i)
+{
+	pthread_mutex_lock(&philo->vars->last_meal_mtx);
+	if (philo->vars->t_die < (get_time() - philo->vars->start)
+		- philo[i].last_meal)
+	{
+		pthread_mutex_unlock(&philo->vars->last_meal_mtx);
+		write_action(&philo[i], DIED);
+		set_death(philo->vars, 1);
+		return (0);
+	}
+	pthread_mutex_unlock(&philo->vars->last_meal_mtx);
+	return (1);
+}
+
+static void	*hawk_eye(void *arg)
 {
 	t_philo	*philo;
 	int		i;
@@ -23,15 +38,8 @@ static void	*hawk_eye(void *arg) //MONITOR
 		i = -1;
 		while (++i < philo->vars->n_philo)
 		{
-			pthread_mutex_lock(&philo->vars->last_meal_mtx);
-			if (philo->vars->t_die < (get_time() - philo->vars->start) - philo[i].last_meal)
-			{
-				pthread_mutex_unlock(&philo->vars->last_meal_mtx);
-				write_action(&philo[i], DIED);
-				set_death(philo->vars, 1);
+			if (dead_or_alive(philo, i) == 0)
 				return (NULL);
-			}
-			pthread_mutex_unlock(&philo->vars->last_meal_mtx);
 			pthread_mutex_lock(&philo->vars->num_meals_mtx);
 			if (philo[i].num_meals == philo->vars->must_eat)
 			{
@@ -45,13 +53,7 @@ static void	*hawk_eye(void *arg) //MONITOR
 	return (NULL);
 }
 
-static void	init_hawk(t_philo *philo, pthread_t *hawk)
-{
-	if (pthread_create(hawk, NULL, &hawk_eye, (void *)philo))
-		printf("Error breeding hawk\n");
-}
-
-static pthread_mutex_t	*init_forks(int len)
+pthread_mutex_t	*init_forks(int len)
 {
 	pthread_mutex_t	*forks;
 	int				i;
@@ -68,38 +70,45 @@ static pthread_mutex_t	*init_forks(int len)
 	return (forks);
 }
 
-// HAWK_EYE : METER 4 MUTEX
-//
-
-int	main(int argc, char **argv)
+static int	set_all(char **argv)
 {
 	t_vars			vars;
-	t_philo			*philo;
 	pthread_mutex_t	*forks;
+	t_philo			*philo;
 	pthread_t		hawk;
 	int				i;
 
 	i = -1;
-	if (argc != 5 && argc != 6)
-	{
-		write(2, "Error arguments number\n", 24);
-		return (2);
-	}
 	if (init_struct(&vars, argv) == 0)
 		return (0);
 	forks = init_forks(vars.n_philo);
 	if (!forks)
 		return (0);
-	philo = create_threads(&vars, forks);
-	init_hawk(philo, &hawk);
+	philo = set_philo(&vars, forks); // proteger :)
+	if (pthread_create(&hawk, NULL, &hawk_eye, (void *)philo))
+		printf("Error breeding hawk\n"); //hacer funcion que libere y de error
 	pthread_join(hawk, NULL);
 	while (++i < philo->vars->n_philo)
-	{
-		//printf("llegadsffdsfdsf\n");
 		pthread_join(philo[i].thread, NULL);
-		//printf("%d\n", i);
-	}
 	free(philo);
 	free(forks);
+	return (1);
+}
+
+int	main(int argc, char **argv)
+{
+	if (argc == 5 || argc == 6)
+	{
+		if (set_all(argv) == 0)
+		{
+			write(2, "Error: creating all threads\n", 29);
+			return (1);
+		}
+	}
+	else
+	{
+		write(2, "Error: wrong arguments number\n", 31);
+		return (1);
+	}
 	return (0);
 }

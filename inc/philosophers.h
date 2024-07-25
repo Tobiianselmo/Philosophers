@@ -6,7 +6,7 @@
 /*   By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:41:52 by tanselmo          #+#    #+#             */
-/*   Updated: 2024/07/24 16:35:28 by tanselmo         ###   ########.fr       */
+/*   Updated: 2024/07/25 19:20:54 by tanselmo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 # define THINK "is thinking"
 # define DIED "died"
 
-typedef struct	s_vars
+typedef struct s_vars
 {
 	int				n_philo;
 	int				t_die;
@@ -42,10 +42,9 @@ typedef struct	s_vars
 	pthread_mutex_t	bool_mtx;
 	pthread_mutex_t	death_mtx;
 	pthread_mutex_t	write_mtx;
-	
 }	t_vars;
 
-typedef struct	s_philo
+typedef struct s_philo
 {
 	int				id;
 	int				num_meals;
@@ -62,16 +61,21 @@ typedef struct	s_philo
 }	t_philo;
 
 //-------------INIT------------//
-int		init_struct(t_vars *data, char **argv);
+int				init_struct(t_vars *data, char **argv);
+void			init_philos(t_philo *philo, t_vars *vars,
+					pthread_mutex_t *forks);
+pthread_mutex_t	*init_forks(int len);
 //-------------ATOI------------//
-int		atoi_phil(char *str);
+int				atoi_phil(char *str);
 //------------UTILS------------//
-void	write_action(t_philo *philo, char *action);
-void	sleepy_time(int time);
-int		get_time(void);
-int		get_death(t_vars *vars);
-void	set_death(t_vars *vars, int death);
+void			write_action(t_philo *philo, char *action);
+void			sleepy_time(int time);
+int				get_time(void);
+int				get_death(t_vars *vars);
+void			set_death(t_vars *vars, int death);
+bool			check_bool(t_philo *philo);
 //------------THREADS----------//
-t_philo	*create_threads(t_vars *vars, pthread_mutex_t *forks);
+t_philo			*create_threads(t_vars *vars, pthread_mutex_t *forks);
+t_philo			*set_philo(t_vars *vars, pthread_mutex_t *forks);
 
 #endif

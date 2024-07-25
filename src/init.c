@@ -6,12 +6,11 @@
 /*   By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:53:42 by tanselmo          #+#    #+#             */
-/*   Updated: 2024/07/24 12:48:54 by tanselmo         ###   ########.fr       */
+/*   Updated: 2024/07/25 16:28:17 by tanselmo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
-
 
 static void	init_num(t_vars *data)
 {
@@ -66,4 +65,25 @@ int	init_struct(t_vars *data, char **argv)
 	pthread_mutex_init(&data->last_meal_mtx, NULL);
 	pthread_mutex_init(&data->num_meals_mtx, NULL);
 	return (1);
+}
+
+void	init_philos(t_philo *philo, t_vars *vars, pthread_mutex_t *forks)
+{
+	int	i;
+
+	i = -1;
+	while (++i < vars->n_philo)
+	{
+		philo[i].id = i + 1;
+		philo[i].l_fork = &forks[i];
+		philo[i].r_fork = &forks[(i + 1) % vars->n_philo];
+		philo[i].last_meal = 0;
+		philo[i].num_meals = 0;
+		philo[i].vars = vars;
+		philo[i].write_mtx = &vars->write_mtx;
+		philo[i].death_mtx = &vars->death_mtx;
+		philo[i].bool_mtx = &vars->bool_mtx;
+		philo[i].last_meal_mtx = &vars->last_meal_mtx;
+		philo[i].num_meals_mtx = &vars->num_meals_mtx;
+	}
 }
