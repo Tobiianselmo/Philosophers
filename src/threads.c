@@ -6,7 +6,7 @@
 /*   By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/19 18:30:14 by tanselmo          #+#    #+#             */
-/*   Updated: 2024/07/25 19:22:50 by tanselmo         ###   ########.fr       */
+/*   Updated: 2024/07/26 11:27:52 by tanselmo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,15 @@ static void	*dinner(void *arg)
 	philo = (t_philo *)arg;
 	if (philo->id % 2)
 		usleep(50);
-	while (get_death(philo->vars) == 0 && check_bool(philo) == true)
+	while (get_death(philo->vars) == 0)
 	{
+		if (check_bool(philo) == false)
+		{
+			pthread_mutex_lock(philo->finish_meal_mtx);
+			philo->vars->finish_meal++;
+			pthread_mutex_unlock(philo->finish_meal_mtx);
+			return (NULL);
+		}
 		unstarvation(philo);
 		write_action(philo, SLEEP);
 		sleepy_time(philo->vars->t_sleep);

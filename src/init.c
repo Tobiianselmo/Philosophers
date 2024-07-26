@@ -6,7 +6,7 @@
 /*   By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:53:42 by tanselmo          #+#    #+#             */
-/*   Updated: 2024/07/25 16:28:17 by tanselmo         ###   ########.fr       */
+/*   Updated: 2024/07/26 11:26:16 by tanselmo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,11 +59,13 @@ int	init_struct(t_vars *data, char **argv)
 		data->bool_meals = false;
 	data->death = 0;
 	data->start = 0;
+	data->finish_meal = 0;
 	pthread_mutex_init(&data->write_mtx, NULL);
 	pthread_mutex_init(&data->death_mtx, NULL);
 	pthread_mutex_init(&data->bool_mtx, NULL);
 	pthread_mutex_init(&data->last_meal_mtx, NULL);
 	pthread_mutex_init(&data->num_meals_mtx, NULL);
+	pthread_mutex_init(&data->finish_meal_mtx, NULL);
 	return (1);
 }
 
@@ -85,5 +87,6 @@ void	init_philos(t_philo *philo, t_vars *vars, pthread_mutex_t *forks)
 		philo[i].bool_mtx = &vars->bool_mtx;
 		philo[i].last_meal_mtx = &vars->last_meal_mtx;
 		philo[i].num_meals_mtx = &vars->num_meals_mtx;
+		philo[i].finish_meal_mtx = &vars->finish_meal_mtx;
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:41:52 by tanselmo          #+#    #+#             */
-/*   Updated: 2024/07/25 19:20:54 by tanselmo         ###   ########.fr       */
+/*   Updated: 2024/07/26 11:26:44 by tanselmo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ typedef struct s_vars
 	bool			bool_meals;
 	int				death;
 	long			start;
+	int				finish_meal;
+	pthread_mutex_t	finish_meal_mtx;
 	pthread_mutex_t	num_meals_mtx;
 	pthread_mutex_t	last_meal_mtx;
 	pthread_mutex_t	bool_mtx;
@@ -53,6 +55,7 @@ typedef struct s_philo
 	pthread_mutex_t	*l_fork;
 	pthread_mutex_t	*r_fork;
 	t_vars			*vars;
+	pthread_mutex_t	*finish_meal_mtx;
 	pthread_mutex_t	*num_meals_mtx;
 	pthread_mutex_t	*last_meal_mtx;
 	pthread_mutex_t	*bool_mtx;

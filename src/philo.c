@@ -6,7 +6,7 @@
 /*   By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 16:24:40 by tanselmo          #+#    #+#             */
-/*   Updated: 2024/07/25 19:24:28 by tanselmo         ###   ########.fr       */
+/*   Updated: 2024/07/26 11:25:35 by tanselmo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,13 +40,13 @@ static void	*hawk_eye(void *arg)
 		{
 			if (dead_or_alive(philo, i) == 0)
 				return (NULL);
-			pthread_mutex_lock(&philo->vars->num_meals_mtx);
-			if (philo[i].num_meals == philo->vars->must_eat)
+			pthread_mutex_lock(philo[i].finish_meal_mtx);
+			if (philo[i].vars->finish_meal == philo->vars->n_philo)
 			{
-				pthread_mutex_unlock(&philo->vars->num_meals_mtx);
+				pthread_mutex_unlock(philo[i].finish_meal_mtx);
 				return (NULL);
 			}
-			pthread_mutex_unlock(&philo->vars->num_meals_mtx);
+			pthread_mutex_unlock(philo[i].finish_meal_mtx);
 		}
 		usleep(50);
 	}
