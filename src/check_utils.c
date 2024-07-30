@@ -6,47 +6,65 @@
 /*   By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/25 11:57:11 by tanselmo          #+#    #+#             */
-/*   Updated: 2024/07/25 17:30:17 by tanselmo         ###   ########.fr       */
+/*   Updated: 2024/07/30 13:47:25 by tanselmo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
 
+void	take_forks(t_philo *philo)
+{
+	if (philo->id % 2 == 0)
+	{
+		protect_mutex(LOCK, philo->l_fork);
+		write_action(philo, FORK);
+		protect_mutex(LOCK, philo->r_fork);
+		write_action(philo, FORK);
+	}
+	else
+	{
+		protect_mutex(LOCK, philo->r_fork);
+		write_action(philo, FORK);
+		protect_mutex(LOCK, philo->l_fork);
+		write_action(philo, FORK);
+	}
+}
+
 int	get_death(t_vars *vars)
 {
 	int	dead;
 
-	pthread_mutex_lock(&vars->death_mtx);
+	protect_mutex(LOCK, &vars->death_mtx);
 	dead = vars->death;
-	pthread_mutex_unlock(&vars->death_mtx);
+	protect_mutex(UNLOCK, &vars->death_mtx);
 	return (dead);
 }
 
 void	set_death(t_vars *vars, int death)
 {
-	pthread_mutex_lock(&vars->death_mtx);
+	protect_mutex(LOCK, &vars->death_mtx);
 	vars->death = death;
-	pthread_mutex_unlock(&vars->death_mtx);
+	protect_mutex(UNLOCK, &vars->death_mtx);
 }
 
 bool	check_bool(t_philo *philo)
 {
-	pthread_mutex_lock(&philo->vars->bool_mtx);
+	protect_mutex(LOCK, &philo->vars->bool_mtx);
 	if (philo->vars->bool_meals == false)
 	{
-		pthread_mutex_unlock(&philo->vars->bool_mtx);
+		protect_mutex(UNLOCK, &philo->vars->bool_mtx);
 		return (true);
 	}
-	pthread_mutex_unlock(&philo->vars->bool_mtx);
-	pthread_mutex_lock(&philo->vars->num_meals_mtx);
+	protect_mutex(UNLOCK, &philo->vars->bool_mtx);
+	protect_mutex(LOCK, &philo->vars->num_meals_mtx);
 	if (philo->num_meals < philo->vars->must_eat)
 	{
-		pthread_mutex_unlock(&philo->vars->num_meals_mtx);
+		protect_mutex(UNLOCK, &philo->vars->num_meals_mtx);
 		return (true);
 	}
 	else
 	{
-		pthread_mutex_unlock(&philo->vars->num_meals_mtx);
+		protect_mutex(UNLOCK, &philo->vars->num_meals_mtx);
 		return (false);
 	}
 }

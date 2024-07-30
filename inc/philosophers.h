@@ -6,7 +6,7 @@
 /*   By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:41:52 by tanselmo          #+#    #+#             */
-/*   Updated: 2024/07/26 11:26:44 by tanselmo         ###   ########.fr       */
+/*   Updated: 2024/07/30 14:03:37 by tanselmo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <pthread.h>
 # include <stdlib.h>
 # include <stdbool.h>
+# include <errno.h>
 # include <sys/time.h>
 
 # define SLEEP "is sleeping"
@@ -26,6 +27,13 @@
 # define EAT "is eating"
 # define THINK "is thinking"
 # define DIED "died"
+
+typedef enum s_actions
+{
+	LOCK,
+	UNLOCK,
+	DESTROY,
+}	t_actions;
 
 typedef struct s_vars
 {
@@ -44,12 +52,14 @@ typedef struct s_vars
 	pthread_mutex_t	bool_mtx;
 	pthread_mutex_t	death_mtx;
 	pthread_mutex_t	write_mtx;
+	pthread_mutex_t	leave_dinner_table_mtx;
 }	t_vars;
 
 typedef struct s_philo
 {
 	int				id;
 	int				num_meals;
+	int				leave_dinner_table;
 	long			last_meal;
 	pthread_t		thread;
 	pthread_mutex_t	*l_fork;
@@ -61,12 +71,12 @@ typedef struct s_philo
 	pthread_mutex_t	*bool_mtx;
 	pthread_mutex_t	*death_mtx;
 	pthread_mutex_t	*write_mtx;
+	pthread_mutex_t	*leave_dinner_table_mtx;
 }	t_philo;
 
 //-------------INIT------------//
 int				init_struct(t_vars *data, char **argv);
-void			init_philos(t_philo *philo, t_vars *vars,
-					pthread_mutex_t *forks);
+void			init_philos(t_philo *p, t_vars *vars, pthread_mutex_t *forks);
 pthread_mutex_t	*init_forks(int len);
 //-------------ATOI------------//
 int				atoi_phil(char *str);
@@ -74,11 +84,18 @@ int				atoi_phil(char *str);
 void			write_action(t_philo *philo, char *action);
 void			sleepy_time(int time);
 int				get_time(void);
+void			the_end(t_vars vars, pthread_mutex_t *forks, t_philo *p);
+//----------CHECK UTILS--------//
+void			take_forks(t_philo *philo);
 int				get_death(t_vars *vars);
 void			set_death(t_vars *vars, int death);
 bool			check_bool(t_philo *philo);
+//----------MUTEX UTILS--------//
+void			protect_mutex(int action, pthread_mutex_t *mutex);
 //------------THREADS----------//
 t_philo			*create_threads(t_vars *vars, pthread_mutex_t *forks);
 t_philo			*set_philo(t_vars *vars, pthread_mutex_t *forks);
+//-------------ERROR-----------//
+void			free_msg(char *msg, t_philo *philo, pthread_mutex_t *forks);
 
 #endif

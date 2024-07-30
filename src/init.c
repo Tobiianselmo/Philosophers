@@ -6,7 +6,7 @@
 /*   By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:53:42 by tanselmo          #+#    #+#             */
-/*   Updated: 2024/07/26 11:26:16 by tanselmo         ###   ########.fr       */
+/*   Updated: 2024/07/30 13:39:10 by tanselmo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,25 @@ static int	set_num(t_vars *data, int i, char *line)
 	return (1);
 }
 
+static int	init_mutex(t_vars *data)
+{
+	if (pthread_mutex_init(&data->write_mtx, NULL))
+		return (0);
+	if (pthread_mutex_init(&data->death_mtx, NULL))
+		return (0);
+	if (pthread_mutex_init(&data->bool_mtx, NULL))
+		return (0);
+	if (pthread_mutex_init(&data->last_meal_mtx, NULL))
+		return (0);
+	if (pthread_mutex_init(&data->num_meals_mtx, NULL))
+		return (0);
+	if (pthread_mutex_init(&data->finish_meal_mtx, NULL))
+		return (0);
+	if (pthread_mutex_init(&data->leave_dinner_table_mtx, NULL))
+		return (0);
+	return (1);
+}
+
 int	init_struct(t_vars *data, char **argv)
 {
 	int	i;	
@@ -60,33 +79,31 @@ int	init_struct(t_vars *data, char **argv)
 	data->death = 0;
 	data->start = 0;
 	data->finish_meal = 0;
-	pthread_mutex_init(&data->write_mtx, NULL);
-	pthread_mutex_init(&data->death_mtx, NULL);
-	pthread_mutex_init(&data->bool_mtx, NULL);
-	pthread_mutex_init(&data->last_meal_mtx, NULL);
-	pthread_mutex_init(&data->num_meals_mtx, NULL);
-	pthread_mutex_init(&data->finish_meal_mtx, NULL);
+	if (init_mutex(data) == 0)
+		return (0);
 	return (1);
 }
 
-void	init_philos(t_philo *philo, t_vars *vars, pthread_mutex_t *forks)
+void	init_philos(t_philo *p, t_vars *vars, pthread_mutex_t *forks)
 {
 	int	i;
 
 	i = -1;
 	while (++i < vars->n_philo)
 	{
-		philo[i].id = i + 1;
-		philo[i].l_fork = &forks[i];
-		philo[i].r_fork = &forks[(i + 1) % vars->n_philo];
-		philo[i].last_meal = 0;
-		philo[i].num_meals = 0;
-		philo[i].vars = vars;
-		philo[i].write_mtx = &vars->write_mtx;
-		philo[i].death_mtx = &vars->death_mtx;
-		philo[i].bool_mtx = &vars->bool_mtx;
-		philo[i].last_meal_mtx = &vars->last_meal_mtx;
-		philo[i].num_meals_mtx = &vars->num_meals_mtx;
-		philo[i].finish_meal_mtx = &vars->finish_meal_mtx;
+		p[i].id = i + 1;
+		p[i].l_fork = &forks[i];
+		p[i].r_fork = &forks[(i + 1) % vars->n_philo];
+		p[i].last_meal = 0;
+		p[i].num_meals = 0;
+		p[i].leave_dinner_table = 0;
+		p[i].vars = vars;
+		p[i].write_mtx = &vars->write_mtx;
+		p[i].death_mtx = &vars->death_mtx;
+		p[i].bool_mtx = &vars->bool_mtx;
+		p[i].last_meal_mtx = &vars->last_meal_mtx;
+		p[i].num_meals_mtx = &vars->num_meals_mtx;
+		p[i].finish_meal_mtx = &vars->finish_meal_mtx;
+		p[i].leave_dinner_table_mtx = &vars->leave_dinner_table_mtx;
 	}
 }

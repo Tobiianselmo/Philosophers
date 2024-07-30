@@ -6,38 +6,27 @@
 /*   By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/19 18:30:14 by tanselmo          #+#    #+#             */
-/*   Updated: 2024/07/26 11:27:52 by tanselmo         ###   ########.fr       */
+/*   Updated: 2024/07/30 14:06:18 by tanselmo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
 
+// TODO PROTEGIDO
+
 static void	unstarvation(t_philo *philo)
 {
-	if (philo->id % 2 == 0)
-	{
-		pthread_mutex_lock(philo->l_fork);
-		write_action(philo, FORK);
-		pthread_mutex_lock(philo->r_fork);
-		write_action(philo, FORK);
-	}
-	else
-	{
-		pthread_mutex_lock(philo->r_fork);
-		write_action(philo, FORK);
-		pthread_mutex_lock(philo->l_fork);
-		write_action(philo, FORK);
-	}
+	take_forks(philo);
 	write_action(philo, EAT);
-	pthread_mutex_lock(&philo->vars->last_meal_mtx);
+	protect_mutex(LOCK, &philo->vars->last_meal_mtx);
 	philo->last_meal = (get_time() - philo->vars->start);
-	pthread_mutex_unlock(&philo->vars->last_meal_mtx);
-	pthread_mutex_lock(&philo->vars->num_meals_mtx);
+	protect_mutex(UNLOCK, &philo->vars->last_meal_mtx);
+	protect_mutex(LOCK, &philo->vars->num_meals_mtx);
 	philo->num_meals++;
-	pthread_mutex_unlock(&philo->vars->num_meals_mtx);
+	protect_mutex(UNLOCK, &philo->vars->num_meals_mtx);
 	sleepy_time(philo->vars->t_eat);
-	pthread_mutex_unlock(philo->l_fork);
-	pthread_mutex_unlock(philo->r_fork);
+	protect_mutex(UNLOCK, philo->l_fork);
+	protect_mutex(UNLOCK, philo->r_fork);
 }
 
 static void	*dinner(void *arg)
@@ -51,9 +40,10 @@ static void	*dinner(void *arg)
 	{
 		if (check_bool(philo) == false)
 		{
-			pthread_mutex_lock(philo->finish_meal_mtx);
+			protect_mutex(LOCK, &philo->vars->finish_meal_mtx);
 			philo->vars->finish_meal++;
-			pthread_mutex_unlock(philo->finish_meal_mtx);
+			philo->leave_dinner_table = 1;
+			protect_mutex(UNLOCK, &philo->vars->finish_meal_mtx);
 			return (NULL);
 		}
 		unstarvation(philo);
@@ -69,9 +59,9 @@ static void	*one_philo(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	pthread_mutex_lock(philo->l_fork);
+	protect_mutex(LOCK, philo->l_fork);
 	write_action(philo, FORK);
-	pthread_mutex_unlock(philo->l_fork);
+	protect_mutex(UNLOCK, philo->l_fork);
 	sleepy_time(philo->vars->t_die);
 	return (NULL);
 }
@@ -83,7 +73,10 @@ t_philo	*create_threads(t_vars *vars, pthread_mutex_t *forks)
 
 	philo = (t_philo *)malloc(sizeof(t_philo) * vars->n_philo);
 	if (!philo)
+	{
+		free_msg("malloc error\n", NULL, forks);
 		return (NULL);
+	}
 	init_philos(philo, vars, forks);
 	i = -1;
 	vars->start = get_time();
@@ -91,7 +84,10 @@ t_philo	*create_threads(t_vars *vars, pthread_mutex_t *forks)
 	{
 		if (pthread_create(&philo[i].thread, NULL,
 				&dinner, (void *)&philo[i]))
-			return (NULL); //funcion de error
+		{
+			free_msg("creating threads\n", philo, forks);
+			return (NULL);
+		}
 	}
 	return (philo);
 }
@@ -104,12 +100,18 @@ t_philo	*set_philo(t_vars *vars, pthread_mutex_t *forks)
 	{
 		philo = (t_philo *)malloc(sizeof(t_philo) * vars->n_philo);
 		if (!philo)
+		{
+			free_msg("malloc error\n", NULL, forks);
 			return (NULL);
+		}
 		init_philos(philo, vars, forks);
 		vars->start = get_time();
 		if (pthread_create(&philo[0].thread, NULL,
 				&one_philo, (void *)&philo[0]))
-			return (NULL); //funcion de error
+		{
+			free_msg("creating threads\n", philo, forks);
+			return (NULL);
+		}
 	}
 	else
 		philo = create_threads(vars, forks);

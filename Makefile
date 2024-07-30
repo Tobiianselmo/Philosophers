@@ -6,7 +6,7 @@
 #    By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/07/09 16:01:48 by tanselmo          #+#    #+#              #
-#    Updated: 2024/07/26 11:30:06 by tanselmo         ###   ########.fr        #
+#    Updated: 2024/07/30 14:06:53 by tanselmo         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,10 +20,12 @@ src/atoi.c \
 src/threads.c \
 src/utils.c \
 src/check_utils.c \
+src/error.c \
+src/mutex_utils.c \
 
 CC = clang
 
-CFLAGS = -g -Wall -Werror -Wextra -pthread -fsanitize=thread
+CFLAGS = -g -Wall -Werror -Wextra -pthread #-fsanitize=thread
 
 OBJS_SRCS = $(patsubst %.c, $(OBJ_DIR)/%.o, $(FILES))
 
