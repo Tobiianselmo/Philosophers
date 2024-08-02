@@ -6,7 +6,7 @@
 /*   By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/10 15:53:42 by tanselmo          #+#    #+#             */
-/*   Updated: 2024/07/30 13:39:10 by tanselmo         ###   ########.fr       */
+/*   Updated: 2024/08/02 18:11:45 by tanselmo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,10 @@ static int	set_num(t_vars *data, int i, char *line)
 
 	nbr = atoi_phil(line);
 	if (nbr == -1)
+	{
+		write(2, "Error: wrong arguments\n", 24);
 		return (0);
+	}
 	if (i == 1)
 		data->n_philo = nbr;
 	else if (i == 2)
@@ -80,7 +83,10 @@ int	init_struct(t_vars *data, char **argv)
 	data->start = 0;
 	data->finish_meal = 0;
 	if (init_mutex(data) == 0)
+	{
+		write(2, "Error: initializing mutex\n", 27);
 		return (0);
+	}
 	return (1);
 }
 

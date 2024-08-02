@@ -6,7 +6,7 @@
 /*   By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/09 16:24:40 by tanselmo          #+#    #+#             */
-/*   Updated: 2024/07/30 13:52:45 by tanselmo         ###   ########.fr       */
+/*   Updated: 2024/08/02 18:10:10 by tanselmo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,10 @@ pthread_mutex_t	*init_forks(int len)
 	while (i < len)
 	{
 		if (pthread_mutex_init(&forks[i++], NULL))
+		{
+			write(2, "Error: initializing forks\n", 23);
 			return (NULL);
+		}
 	}
 	return (forks);
 }
