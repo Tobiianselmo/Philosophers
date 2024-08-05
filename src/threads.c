@@ -6,13 +6,11 @@
 /*   By: tanselmo <tanselmo@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/19 18:30:14 by tanselmo          #+#    #+#             */
-/*   Updated: 2024/08/02 17:53:03 by tanselmo         ###   ########.fr       */
+/*   Updated: 2024/08/05 17:37:21 by tanselmo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/philosophers.h"
-
-// TODO PROTEGIDO
 
 static void	unstarvation(t_philo *philo)
 {
@@ -35,7 +33,7 @@ static void	*dinner(void *arg)
 
 	philo = (t_philo *)arg;
 	if (!(philo->id % 2))
-		usleep(100);
+		usleep(50);
 	while (get_death(philo->vars) == 0)
 	{
 		if (check_bool(philo) == false)
@@ -50,8 +48,6 @@ static void	*dinner(void *arg)
 		write_action(philo, SLEEP);
 		sleepy_time(philo->vars->t_sleep);
 		write_action(philo, THINK);
-		if (philo->id % 2) // Me lo comento delfi no se si lo dejare o no, puede que si.
-			usleep(50);
 	}
 	return (NULL);
 }
